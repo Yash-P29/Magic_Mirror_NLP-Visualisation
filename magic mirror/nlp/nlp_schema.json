@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Magic Mirror NLP Output Schema",
+  "description": "The standardized JSON contract between the NLP subsystem and the Brain module.",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "number",
+      "description": "Unix timestamp of when the NLP processing completed."
+    },
+    "is_partial": {
+      "type": "boolean",
+      "description": "True if this is an intermediate understanding based on partial streaming speech. False if it is a complete clause/sentence."
+    },
+    "text_segment": {
+      "type": "string",
+      "description": "The exact transcript segment that was processed."
+    },
+    "speaker_activity": {
+      "type": "array",
+      "description": "The classified intents or discourse actions the speaker is currently performing.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "intent": {
+            "type": "string",
+            "enum": [
+              "explaining", "defining", "describing", "giving_example", "demonstrating", 
+              "comparing", "contrasting", "analogy", "hypothetical", "reasoning", 
+              "cause_effect", "process_sequencing", "questioning", "answering", 
+              "instructing", "emphasizing", "correcting", "clarifying", "summarizing", 
+              "recalling", "introducing", "transitioning", "concluding", "speculating", 
+              "predicting", "casual"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          }
+        },
+        "required": ["intent", "confidence"]
+      }
+    },
+    "semantic_graph": {
+      "type": "object",
+      "description": "The structured knowledge extracted from the speech.",
+      "properties": {
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "description": "Persistent unique identifier (e.g. dog_1)" },
+              "name": { "type": "string" },
+              "class": { "type": "string", "description": "General categorization (e.g. animal, body_part, abstract)" },
+              "reference": { "type": "string", "description": "Optional mapping to physical world (e.g. speaker, desk)" },
+              "status": { 
+                "type": "string", 
+                "enum": ["new_explicit", "existing_explicit", "inferred_context"],
+                "description": "Indicates if the entity was just introduced, already existed, or was inferred."
+              }
+            },
+            "required": ["id", "name", "class", "status"]
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": { "type": "string", "description": "Entity ID of the subject" },
+              "predicate": { "type": "string", "description": "The action or state linking the entities" },
+              "object": { "type": "string", "description": "Entity ID of the object" },
+              "type": { "type": "string", "enum": ["spatial", "temporal", "causal", "property", "action", "composition"] },
+              "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+            },
+            "required": ["subject", "predicate", "object", "type"]
+          }
+        },
+        "quantities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entity": { "type": "string", "description": "Entity ID" },
+              "amount": { "type": "number" },
+              "unit": { "type": "string" }
+            },
+            "required": ["entity", "amount"]
+          }
+        }
+      },
+      "required": ["entities", "relationships"]
+    },
+    "explicit_information": {
+      "type": "array",
+      "description": "Facts directly stated by the speaker, isolated from inferences.",
+      "items": { "type": "string" }
+    },
+    "inferred_information": {
+      "type": "array",
+      "description": "Facts derived logically, contextually, or spatially by the NLP module.",
+      "items": { "type": "string" }
+    },
+    "coreference_resolutions": {
+      "type": "array",
+      "description": "Mapping of pronouns or vague references to explicit Entity IDs.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text_reference": { "type": "string", "description": "The pronoun or referencing phrase (e.g., 'it', 'this one', 'here')" },
+          "resolved_entity": { "type": "string", "description": "The ID of the entity it resolves to" }
+        },
+        "required": ["text_reference", "resolved_entity"]
+      }
+    },
+    "explanation_state": {
+      "type": "object",
+      "description": "A compact representation of the ongoing discourse context.",
+      "properties": {
+        "current_topic": { "type": "string" },
+        "active_concept": { "type": "string" },
+        "recent_entities": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of recent Entity IDs active in the discourse."
+        }
+      },
+      "required": ["current_topic", "active_concept", "recent_entities"]
+    }
+  },
+  "required": [
+    "timestamp", "is_partial", "text_segment", "speaker_activity", 
+    "semantic_graph", "explicit_information", "inferred_information",
+    "coreference_resolutions", "explanation_state"
+  ]
+}

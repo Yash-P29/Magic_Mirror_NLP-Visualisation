@@ -1,0 +1,144 @@
+[
+  {
+    "timestamp": 1715002000,
+    "is_partial": false,
+    "text_segment": "Water is made up of two hydrogen atoms and one oxygen atom.",
+    "speaker_activity": [
+      {
+        "intent": "explaining",
+        "confidence": 0.98
+      }
+    ],
+    "semantic_graph": {
+      "entities": [
+        {
+          "id": "ent_water_1",
+          "name": "water",
+          "class": "substance",
+          "status": "new_explicit"
+        },
+        {
+          "id": "ent_hydrogen_1",
+          "name": "hydrogen atom",
+          "class": "atom",
+          "status": "new_explicit"
+        },
+        {
+          "id": "ent_oxygen_1",
+          "name": "oxygen atom",
+          "class": "atom",
+          "status": "new_explicit"
+        }
+      ],
+      "relationships": [
+        {
+          "subject": "ent_water_1",
+          "predicate": "made_up_of",
+          "object": "ent_hydrogen_1",
+          "type": "composition",
+          "confidence": 0.95
+        },
+        {
+          "subject": "ent_water_1",
+          "predicate": "made_up_of",
+          "object": "ent_oxygen_1",
+          "type": "composition",
+          "confidence": 0.95
+        }
+      ],
+      "quantities": [
+        {
+          "entity": "ent_hydrogen_1",
+          "amount": 2,
+          "unit": "atom"
+        },
+        {
+          "entity": "ent_oxygen_1",
+          "amount": 1,
+          "unit": "atom"
+        }
+      ]
+    },
+    "explicit_information": [
+      "Water is made of hydrogen atoms and an oxygen atom.",
+      "There are two hydrogen atoms.",
+      "There is one oxygen atom."
+    ],
+    "inferred_information": [
+      "The speaker is discussing the molecular structure of water (H2O)."
+    ],
+    "coreference_resolutions": [],
+    "explanation_state": {
+      "current_topic": "molecular composition",
+      "active_concept": "structure of water",
+      "recent_entities": [
+        "ent_water_1",
+        "ent_hydrogen_1",
+        "ent_oxygen_1"
+      ]
+    }
+  },
+  {
+    "timestamp": 1715002010,
+    "is_partial": false,
+    "text_segment": "If you look right here on my palm, imagine a small mechanical gear.",
+    "speaker_activity": [
+      {
+        "intent": "demonstrating",
+        "confidence": 0.95
+      },
+      {
+        "intent": "instructing",
+        "confidence": 0.85
+      }
+    ],
+    "semantic_graph": {
+      "entities": [
+        {
+          "id": "ent_speaker_palm_1",
+          "name": "speaker palm",
+          "class": "body_part",
+          "reference": "speaker",
+          "status": "inferred_context"
+        },
+        {
+          "id": "ent_gear_1",
+          "name": "mechanical gear",
+          "class": "physical_object",
+          "status": "new_explicit"
+        }
+      ],
+      "relationships": [
+        {
+          "subject": "ent_gear_1",
+          "predicate": "located_on",
+          "object": "ent_speaker_palm_1",
+          "type": "spatial",
+          "confidence": 0.92
+        }
+      ]
+    },
+    "explicit_information": [
+      "The user should imagine a mechanical gear.",
+      "The gear is small."
+    ],
+    "inferred_information": [
+      "The phrase 'here on my palm' refers to the speaker's physical palm in the camera feed.",
+      "A spatial relationship exists anchoring the gear to the palm."
+    ],
+    "coreference_resolutions": [
+      {
+        "text_reference": "my palm",
+        "resolved_entity": "ent_speaker_palm_1"
+      }
+    ],
+    "explanation_state": {
+      "current_topic": "mechanical demonstration",
+      "active_concept": "spatial placement of a gear",
+      "recent_entities": [
+        "ent_gear_1",
+        "ent_speaker_palm_1"
+      ]
+    }
+  }
+]

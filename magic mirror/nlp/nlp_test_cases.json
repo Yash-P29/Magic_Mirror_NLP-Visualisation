@@ -1,0 +1,153 @@
+[
+  {
+    "id": "test_001_explaining",
+    "category": "explaining",
+    "input": "Water is made up of two hydrogen atoms and one oxygen atom.",
+    "expected_primary_activity": "explaining",
+    "expected_entities": ["water", "hydrogen atom", "oxygen atom"]
+  },
+  {
+    "id": "test_002_defining",
+    "category": "defining",
+    "input": "A black hole is a region of spacetime where gravity is so strong that nothing can escape from it.",
+    "expected_primary_activity": "defining",
+    "expected_entities": ["black hole", "region", "spacetime", "gravity"]
+  },
+  {
+    "id": "test_003_describing",
+    "category": "describing",
+    "input": "The surface of Mars is rocky, with canyons, volcanoes, and dry lake beds.",
+    "expected_primary_activity": "describing",
+    "expected_entities": ["surface of Mars", "canyons", "volcanoes", "dry lake beds"]
+  },
+  {
+    "id": "test_004_giving_example",
+    "category": "giving_example",
+    "input": "For instance, consider a simple pendulum swinging back and forth.",
+    "expected_primary_activity": "giving_example",
+    "expected_entities": ["pendulum"]
+  },
+  {
+    "id": "test_005_demonstrating_spatial",
+    "category": "demonstrating",
+    "input": "If you look right here on my palm, imagine a small mechanical gear.",
+    "expected_primary_activity": "demonstrating",
+    "expected_entities": ["palm", "mechanical gear"],
+    "expected_spatial_reference": "on my palm"
+  },
+  {
+    "id": "test_006_comparing",
+    "category": "comparing",
+    "input": "Unlike the Earth, Jupiter is a gas giant and does not have a solid surface.",
+    "expected_primary_activity": "comparing",
+    "expected_entities": ["Earth", "Jupiter", "gas giant", "solid surface"]
+  },
+  {
+    "id": "test_007_analogy",
+    "category": "analogy",
+    "input": "You can think of the CPU as the brain of the computer.",
+    "expected_primary_activity": "analogy",
+    "expected_entities": ["CPU", "brain", "computer"]
+  },
+  {
+    "id": "test_008_hypothetical",
+    "category": "hypothetical",
+    "input": "Suppose we were to drop a feather and a hammer on the moon at the exact same time.",
+    "expected_primary_activity": "hypothetical",
+    "expected_entities": ["feather", "hammer", "moon"]
+  },
+  {
+    "id": "test_009_cause_effect",
+    "category": "cause_effect",
+    "input": "When the temperature drops below freezing, the water molecules slow down and form ice crystals.",
+    "expected_primary_activity": "cause_effect",
+    "expected_entities": ["temperature", "water molecules", "ice crystals"]
+  },
+  {
+    "id": "test_010_processes",
+    "category": "process_sequencing",
+    "input": "First, the blood enters the right atrium, then it is pumped into the right ventricle.",
+    "expected_primary_activity": "process_sequencing",
+    "expected_entities": ["blood", "right atrium", "right ventricle"]
+  },
+  {
+    "id": "test_011_questions",
+    "category": "questioning",
+    "input": "But what happens to the energy if the system is completely closed?",
+    "expected_primary_activity": "questioning",
+    "expected_entities": ["energy", "system"]
+  },
+  {
+    "id": "test_012_corrections_incomplete",
+    "category": "correcting",
+    "input": "So the electron moves into the... wait, no, the proton stays in the nucleus.",
+    "expected_primary_activity": "correcting",
+    "expected_entities": ["electron", "proton", "nucleus"]
+  },
+  {
+    "id": "test_013_clarifications",
+    "category": "clarifying",
+    "input": "To be more specific, I'm talking about the mitochondria, not the entire cell.",
+    "expected_primary_activity": "clarifying",
+    "expected_entities": ["mitochondria", "cell"]
+  },
+  {
+    "id": "test_014_summaries",
+    "category": "summarizing",
+    "input": "In short, the entire process is driven by the transfer of heat from the core to the mantle.",
+    "expected_primary_activity": "summarizing",
+    "expected_entities": ["process", "heat", "core", "mantle"]
+  },
+  {
+    "id": "test_015_coreference",
+    "category": "references/coreference",
+    "input": "A dog has four legs. It can run very quickly.",
+    "expected_primary_activity": "describing",
+    "expected_entities": ["dog", "legs"],
+    "expected_coreference": {"text_reference": "It", "resolved_entity": "dog"}
+  },
+  {
+    "id": "test_016_implicit_spatial",
+    "category": "spatial references",
+    "input": "Now take this block and place it exactly above the first one.",
+    "expected_primary_activity": "instructing",
+    "expected_entities": ["block", "first one"],
+    "expected_spatial_reference": "exactly above"
+  },
+  {
+    "id": "test_017_multiple_activities",
+    "category": "multiple activities",
+    "input": "For example, look at this graph; it clearly shows how the pressure decreases as altitude increases.",
+    "expected_primary_activity": "giving_example",
+    "expected_secondary_activity": "demonstrating",
+    "expected_entities": ["graph", "pressure", "altitude"]
+  },
+  {
+    "id": "test_018_ambiguous",
+    "category": "ambiguous statements",
+    "input": "It just kind of goes around that thing over there.",
+    "expected_primary_activity": "describing",
+    "expected_entities": ["It", "that thing"],
+    "note": "Requires visual grounding to resolve 'It' and 'that thing'."
+  },
+  {
+    "id": "test_019_casual_speech",
+    "category": "casual speech",
+    "input": "Hey, can you grab me a cup of coffee before we start the next section?",
+    "expected_primary_activity": "casual",
+    "expected_entities": ["coffee", "section"],
+    "note": "Should NOT trigger visualization."
+  },
+  {
+    "id": "test_020_multi_sentence_context",
+    "category": "multi-sentence context",
+    "input": "Let's look at the Earth. Notice how it tilts on its axis. This tilt is what gives us our seasons.",
+    "expected_primary_activity": "explaining",
+    "expected_entities": ["Earth", "axis", "tilt", "seasons"],
+    "expected_coreference": [
+      {"text_reference": "it", "resolved_entity": "Earth"},
+      {"text_reference": "its", "resolved_entity": "Earth"},
+      {"text_reference": "This tilt", "resolved_entity": "tilt"}
+    ]
+  }
+]

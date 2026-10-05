@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ext_001_topic_switch",
+    "category": "multi-sentence context",
+    "input": "We were just talking about the dog, but now I want you to focus on this cat sitting over here.",
+    "expected_primary_activity": "transitioning",
+    "expected_entities": ["dog", "cat"],
+    "reset_context": false
+  },
+  {
+    "id": "ext_002_coreference_heavy",
+    "category": "references/coreference",
+    "input": "It is much smaller than the previous animal and has very sharp claws.",
+    "expected_primary_activity": "comparing",
+    "expected_entities": ["claws"],
+    "reset_context": true
+  },
+  {
+    "id": "ext_003_self_correction",
+    "category": "correcting",
+    "input": "So the electrons are in the center... wait no, they orbit the outside, the protons are in the center.",
+    "expected_primary_activity": "correcting",
+    "expected_entities": ["electrons", "protons", "center", "outside"],
+    "reset_context": false
+  },
+  {
+    "id": "ext_004_implicit_action",
+    "category": "demonstrating",
+    "input": "Watch what happens when I push them together like this.",
+    "expected_primary_activity": "demonstrating",
+    "expected_entities": ["them"],
+    "reset_context": false
+  },
+  {
+    "id": "ext_005_casual_ignore",
+    "category": "casual speech",
+    "input": "Anyway, let's take a quick five minute break guys.",
+    "expected_primary_activity": "casual",
+    "expected_entities": ["break"],
+    "reset_context": true
+  }
+]

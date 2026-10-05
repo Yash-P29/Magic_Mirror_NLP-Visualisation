@@ -1,0 +1,50 @@
+{
+  "speaker_activity": [
+    {
+      "intent": "answering",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [
+      {
+        "id": "ent_1",
+        "name": "Lord",
+        "class": "entity",
+        "status": "explicit"
+      },
+      {
+        "id": "ent_2",
+        "name": "jump",
+        "class": "entity",
+        "status": "explicit"
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "ent_1",
+        "predicate": "is",
+        "object": "ent_2",
+        "type": "composition",
+        "confidence": 0.95
+      }
+    ],
+    "quantities": []
+  },
+  "explicit_information": [
+    "The phrase 'We, Lord, we chained our hearts in the jump, never appeared' is a poetic expression."
+  ],
+  "explanation_state": {
+    "current_topic": "Poetic Expression",
+    "active_concept": "Chained Hearts",
+    "recent_entities": [
+      "ent_1",
+      "ent_2"
+    ]
+  },
+  "timestamp": 1789294296,
+  "is_partial": false,
+  "text_segment": "We, Lord, we chained our hearts in the jump, never appeared.",
+  "inferred_information": [],
+  "coreference_resolutions": []
+}

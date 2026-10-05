@@ -1,0 +1,88 @@
+{
+  "speaker_activity": [
+    {
+      "intent": "explaining",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [
+      {
+        "id": "Methylie Yashpate",
+        "name": "person",
+        "class": "name",
+        "status": "new_explicit"
+      },
+      {
+        "id": "North Shore",
+        "name": "location",
+        "class": "location",
+        "status": "new_explicit"
+      },
+      {
+        "id": "methylie_yashpate",
+        "name": "Methylie Yashpate",
+        "class": "inferred",
+        "status": "inferred_context"
+      },
+      {
+        "id": "shore",
+        "name": "Shore",
+        "class": "inferred_candidate",
+        "status": "auto_detected"
+      },
+      {
+        "id": "name",
+        "name": "name",
+        "class": "inferred_candidate",
+        "status": "auto_detected"
+      },
+      {
+        "id": "north",
+        "name": "North",
+        "class": "inferred_candidate",
+        "status": "auto_detected"
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "Methylie Yashpate",
+        "predicate": "is_sitting",
+        "object": "location",
+        "type": "composition",
+        "confidence": 0.95
+      }
+    ],
+    "quantities": [
+      {
+        "entity": "location",
+        "amount": 1,
+        "unit": "location"
+      }
+    ]
+  },
+  "explicit_information": [
+    "Methylie Yashpate",
+    "North Shore"
+  ],
+  "inferred_information": [
+    "Methylie Yashpate is from the North Shore."
+  ],
+  "coreference_resolutions": [
+    {
+      "text_reference": "it",
+      "resolved_entity": "location"
+    }
+  ],
+  "explanation_state": {
+    "current_topic": "Methylie Yashpate",
+    "active_concept": "is_sitting",
+    "recent_entities": [
+      "Methylie Yashpate",
+      "North Shore"
+    ]
+  },
+  "timestamp": 1791184762,
+  "is_partial": false,
+  "text_segment": "Hi, my name is Methylie Yashpate and I am sitting there from the North Shore."
+}

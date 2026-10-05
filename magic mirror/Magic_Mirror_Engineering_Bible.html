@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Mirror — Engineering Bible v1.0</title>
+<meta name="description" content="The canonical engineering reference for Magic Mirror — Speech to Live Visualization.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════
+   MAGIC MIRROR — ENGINEERING BIBLE
+   Design System & Global Styles
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* Palette */
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #111114;
+  --bg-tertiary: #18181c;
+  --bg-elevated: #1e1e24;
+  --bg-card: #141418;
+  --bg-sidebar: #0d0d10;
+
+  --border-subtle: #1e1e26;
+  --border-default: #2a2a34;
+  --border-strong: #3a3a48;
+
+  --text-primary: #e8e8ed;
+  --text-secondary: #9898a6;
+  --text-tertiary: #6a6a78;
+  --text-muted: #4a4a58;
+
+  /* Magical Teals and Purples for Magic Mirror */
+  --accent-primary: #0ea5e9;
+  --accent-secondary: #38bdf8;
+  --accent-tertiary: #a855f7;
+  --accent-glow: rgba(14, 165, 233, 0.15);
+  --accent-glow-strong: rgba(168, 85, 247, 0.3);
+
+  --red: #ef4444;
+  --red-muted: rgba(239, 68, 68, 0.12);
+  --green: #22c55e;
+  --green-muted: rgba(34, 197, 94, 0.12);
+  --amber: #f59e0b;
+  --amber-muted: rgba(245, 158, 11, 0.12);
+  --cyan: #06b6d4;
+  --cyan-muted: rgba(6, 182, 212, 0.12);
+  --violet: #8b5cf6;
+  --violet-muted: rgba(139, 92, 246, 0.12);
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Sidebar */
+  --sidebar-width: 280px;
+}
+
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 15px;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR NAVIGATION
+   ═══════════════════════════════════════════════════════ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  z-index: 100;
+  padding: var(--space-xl) 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+.sidebar-logo {
+  padding: 0 var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.sidebar-logo h1 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.sidebar-logo span {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+}
+
+.sidebar-section {
+  margin-bottom: var(--space-lg);
+}
+
+.sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: var(--space-sm) var(--space-lg);
+  margin-bottom: var(--space-xs);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 6px var(--space-lg);
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border-left: 2px solid transparent;
+}
+
+.sidebar-link:hover {
+  color: var(--text-primary);
+  background: var(--accent-glow);
+  border-left-color: var(--accent-primary);
+}
+
+.sidebar-link.active {
+  color: var(--accent-secondary);
+  border-left-color: var(--accent-primary);
+  background: var(--accent-glow);
+}
+
+.sidebar-link.sub {
+  padding-left: calc(var(--space-lg) + 14px);
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+
+.sidebar-link.sub:hover {
+  color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════════════════ */
+
+.main {
+  margin-left: var(--sidebar-width);
+  max-width: 860px;
+  padding: var(--space-4xl) var(--space-3xl);
+}
+
+/* ═══════════════════════════════════════════════════════
+   COVER
+   ═══════════════════════════════════════════════════════ */
+
+.cover {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  padding-bottom: var(--space-4xl);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4xl);
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: -200px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+.cover h1 {
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
+}
+
+.cover h1 span {
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cover-subtitle {
+  font-size: 18px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 540px;
+  margin-bottom: var(--space-2xl);
+}
+
+.cover-meta {
+  display: flex;
+  gap: var(--space-2xl);
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.cover-meta strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════ */
+
+.part-header {
+  margin-top: var(--space-4xl);
+  margin-bottom: var(--space-3xl);
+  padding-top: var(--space-3xl);
+  border-top: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.part-header::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: var(--accent-primary);
+}
+
+.part-number {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.part-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.part-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 600px;
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  margin-top: var(--space-3xl);
+  margin-bottom: var(--space-lg);
+  padding-top: var(--space-xl);
+}
+
+h3 {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+}
+
+h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+p {
+  margin-bottom: var(--space-md);
+  color: var(--text-secondary);
+}
+
+p strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════════════════ */
+
+/* Callout */
+.callout {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-xl);
+  margin: var(--space-xl) 0;
+  font-size: 14.5px;
+}
+
+.callout.north-star {
+  border-left-color: var(--amber);
+  background: var(--amber-muted);
+}
+
+.callout.north-star p { color: var(--text-primary); }
+
+.callout.principle {
+  border-left-color: var(--cyan);
+}
+
+.callout.law {
+  border-left-color: var(--red);
+}
+
+.callout.experience {
+  border-left-color: var(--green);
+}
+
+.callout-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+}
+
+.callout.north-star .callout-label { color: var(--amber); }
+.callout.principle .callout-label { color: var(--cyan); }
+.callout.law .callout-label { color: var(--red); }
+.callout.experience .callout-label { color: var(--green); }
+
+.callout blockquote {
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-xl) 0;
+  font-size: 13.5px;
+}
+
+thead th {
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-tertiary);
+}
+
+thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+tbody td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+
+tbody tr:hover { background: var(--accent-glow); }
+
+tbody td:first-child {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Comparison Grid */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin: var(--space-xl) 0;
+}
+
+.comparison-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.comparison-card.is { border-top: 3px solid var(--green); }
+.comparison-card.is-not { border-top: 3px solid var(--red); }
+
+.comparison-card h4 {
+  margin-top: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+}
+
+.comparison-card.is h4 { color: var(--green); }
+.comparison-card.is-not h4 { color: var(--red); }
+
+.comparison-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.comparison-card ul li {
+  padding: 4px 0;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.comparison-card ul li::before {
+  display: inline-block;
+  width: 18px;
+  font-weight: 700;
+}
+
+.comparison-card.is ul li::before { content: '✓'; color: var(--green); }
+.comparison-card.is-not ul li::before { content: '✗'; color: var(--red); }
+
+/* Diagram Container */
+.diagram-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin: var(--space-2xl) 0;
+  overflow-x: auto;
+}
+
+.diagram-container .diagram-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-lg);
+  text-align: center;
+}
+
+.mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+/* Value Pill Grid */
+.pill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin: var(--space-xl) 0;
+}
+
+.pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.pill-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+
+.pill-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Law Card */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-xl);
+  margin: var(--space-lg) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.law-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--accent-tertiary);
+}
+
+.law-number {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-tertiary);
+  margin-bottom: var(--space-xs);
+}
+
+.law-statement {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.law-purpose {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.law-engineering {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  background: var(--bg-tertiary);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-sm);
+}
+
+.law-engineering span {
+  color: var(--accent-secondary);
+  font-weight: 600;
+}
+
+/* Dialogue */
+.dialogue {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: var(--space-xl) 0;
+}
+
+.dialogue-header {
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--bg-tertiary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dialogue-msg {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.dialogue-msg:last-child { border-bottom: none; }
+
+.dialogue-msg .role {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-width: 56px;
+  padding-top: 2px;
+}
+
+.dialogue-msg .role.speaker { color: var(--cyan); }
+.dialogue-msg .role.system { color: var(--accent-secondary); }
+
+.dialogue-msg .text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Component card */
+.component-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-xl);
+  margin: var(--space-lg) 0;
+}
+
+.component-card h4 {
+  margin-top: 0;
+  color: var(--accent-secondary);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 16px;
+}
+
+.component-card .meta-row {
+  display: flex;
+  gap: var(--space-xl);
+  margin-top: var(--space-sm);
+}
+
+.component-card .meta-row .label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.component-card .meta-row .value {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Numbered list */
+ol.clean {
+  list-style: none;
+  counter-reset: item;
+  padding: 0;
+}
+
+ol.clean li {
+  counter-increment: item;
+  padding: var(--space-sm) 0;
+  padding-left: 32px;
+  position: relative;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+ol.clean li::before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  background: var(--accent-glow);
+  color: var(--accent-secondary);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 9px;
+}
+
+/* Unordered list */
+ul.bullet {
+  list-style: none;
+  padding: 0;
+}
+
+ul.bullet li {
+  position: relative;
+  padding: 4px 0 4px 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+ul.bullet li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: var(--space-3xl) 0;
+}
+
+/* Separator */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: var(--space-3xl) 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+@media (max-width: 1100px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: var(--space-2xl) var(--space-xl); }
+  .cover h1 { font-size: 40px; }
+  .comparison-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRINT
+   ═══════════════════════════════════════════════════════ */
+
+@media print {
+  .sidebar { display: none; }
+  .main { margin-left: 0; max-width: 100%; }
+  body { background: #fff; color: #111; font-size: 11pt; }
+  .cover h1 { font-size: 36pt; }
+  .part-header { break-before: page; }
+  .diagram-container, .callout, .law-card, .comparison-card, .component-card { break-inside: avoid; }
+  table { font-size: 9pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════════════════ -->
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <h1>Magic Mirror</h1>
+    <span>Engineering Bible v1.0</span>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Part I</div>
+    <a class="sidebar-link" href="#part-1">Vision & Context</a>
+    <a class="sidebar-link sub" href="#core-context">Core Project Context</a>
+    <a class="sidebar-link sub" href="#natural-explanation">Natural Explanation</a>
+    <a class="sidebar-link sub" href="#problem-statement">Problem Statement</a>
+    <a class="sidebar-link sub" href="#vision">Vision of Magic Mirror</a>
+    <a class="sidebar-link sub" href="#exact-experience">Exact User Experience</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Part II</div>
+    <a class="sidebar-link" href="#part-2">Architecture & Logic</a>
+    <a class="sidebar-link sub" href="#system-architecture">System Architecture</a>
+    <a class="sidebar-link sub" href="#multimodal-understanding">Multimodal Understanding</a>
+    <a class="sidebar-link sub" href="#context-memory">Context & Memory</a>
+    <a class="sidebar-link sub" href="#opportunity-detection">Opportunity Detection</a>
+    <a class="sidebar-link sub" href="#visual-planning">Visual Planning</a>
+    <a class="sidebar-link sub" href="#visualization-types">2D, Animated, & 3D</a>
+    <a class="sidebar-link sub" href="#spatial-grounding">Spatial Grounding</a>
+    <a class="sidebar-link sub" href="#temporal-behavior">Temporal Behavior</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Part III</div>
+    <a class="sidebar-link" href="#part-3">Research & Strategy</a>
+    <a class="sidebar-link sub" href="#research-landscape">Research Landscape</a>
+    <a class="sidebar-link sub" href="#comparisons">What Already Exists</a>
+    <a class="sidebar-link sub" href="#research-gap">The Research Gap</a>
+    <a class="sidebar-link sub" href="#hypothesis">Research Hypothesis</a>
+    <a class="sidebar-link sub" href="#mvp">The MVP</a>
+    <a class="sidebar-link sub" href="#not-mvp">What the MVP is NOT</a>
+    <a class="sidebar-link sub" href="#failure-cases">Failure Cases</a>
+    <a class="sidebar-link sub" href="#evaluation">Evaluation Concept</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Part IV</div>
+    <a class="sidebar-link" href="#part-4">Future & Principles</a>
+    <a class="sidebar-link sub" href="#use-cases">Use Cases</a>
+    <a class="sidebar-link sub" href="#long-term">Long-Term Vision</a>
+    <a class="sidebar-link sub" href="#terminology">Terminology</a>
+    <a class="sidebar-link sub" href="#project-principles">Project Principles</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════════════════ -->
+
+<main class="main">
+
+  <!-- ─────────────────────────────────────────────────────
+       COVER
+       ───────────────────────────────────────────────────── -->
+
+  <section class="cover" id="cover">
+    <div class="cover-label">Project Foundation</div>
+    <h1>Magic<br><span>Mirror</span></h1>
+    <p class="cover-subtitle">
+      Speech → Live Visualization.
+      The canonical source of truth for building the world's first intent-driven, spatially grounded, real-time visual explanation layer.
+    </p>
+    <div class="cover-meta">
+      <div><strong>Version</strong> 1.0</div>
+      <div><strong>Status</strong> Conceptual Framework</div>
+      <div><strong>Classification</strong> Foundational Research</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PART I — VISION & CONTEXT
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="part-header" id="part-1">
+    <div class="part-number">Part I</div>
+    <div class="part-title">Vision & Context</div>
+    <p class="part-desc">The problem Magic Mirror solves, the vision that drives it, and the difference between implicit intent and explicit commands.</p>
+  </section>
+
+  <h2 id="core-context">1.1 Core Project Context</h2>
+
+  <p>
+    Current live video experiences—such as online lectures, presentations, livestreams, demonstrations, and video calls—are visually limited and rigid. A speaker can explain a complex concept verbally, but visual augmentation generally requires significant preparation. If a teacher wants to show the structure of an atom, they must rely on prepared slides, manually triggered overlays, physical whiteboards, pre-made visual assets, or heavy post-production editing.
+  </p>
+
+  <p>
+    <strong>Magic Mirror</strong> is designed to fundamentally remove the separation between natural verbal explanation and visual communication.
+  </p>
+
+  <div class="callout north-star">
+    <div class="callout-label">Fundamental Vision</div>
+    <blockquote>A person should be able to simply explain something naturally while speaking on camera, and the world around them should visually react to illustrate their points.</blockquote>
+  </div>
+
+  <p>
+    They should NOT have to issue explicit commands to the system (e.g., "System, display a dog"). Instead, the system must listen to the natural flow of the explanation, understand the pedagogical or conversational context, observe the physical scene and gestures of the speaker, and intelligently determine whether something being explained would benefit from a visual representation. Magic Mirror acts as an invisible, highly intelligent visual assistant that brings explanations to life in real time.
+  </p>
+
+  <h2 id="natural-explanation">1.2 The Most Important Principle: Natural Explanation, Not Voice Commands</h2>
+
+  <p>
+    This section represents the absolute core philosophy of the project. <strong>Magic Mirror is NOT primarily a voice-controlled AR system.</strong>
+  </p>
+
+  <p>
+    In traditional voice-controlled systems, speech is used as an explicit instruction interface. The user says: <em>"Generate a dog."</em> or <em>"Put a heart on my hand."</em>
+  </p>
+
+  <p>
+    In Magic Mirror, <strong>the user behaves completely naturally, as if they were teaching or explaining a concept to another human being.</strong>
+  </p>
+
+  <div class="dialogue">
+    <div class="dialogue-header">Example A: Natural Explanation</div>
+    <div class="dialogue-msg">
+      <span class="role speaker">Speaker</span>
+      <span class="text">Imagine an electron orbiting around the nucleus. It isn't really just sitting there; we describe its behavior using this probability distribution...</span>
+    </div>
+    <div class="dialogue-msg">
+      <span class="role system">System</span>
+      <span class="text">[Understands the user is teaching, not commanding. Injects a 3D animated atom model between the user's hands.]</span>
+    </div>
+  </div>
+
+  <div class="dialogue">
+    <div class="dialogue-header">Example B: Spatial Introduction</div>
+    <div class="dialogue-msg">
+      <span class="role speaker">Speaker</span>
+      <span class="text">Think about a dog sitting here on my hand. Imagine how small it would look compared to the size of the palm.</span>
+    </div>
+    <div class="dialogue-msg">
+      <span class="role system">System</span>
+      <span class="text">[Infers a dog is being introduced, conceptually placed at a spatial location (hand), and visually anchors a 3D dog model appropriately.]</span>
+    </div>
+  </div>
+
+  <h3>The Critical Distinction</h3>
+  <p>
+    There is a massive technical and conceptual difference between <strong>"the speaker mentioned an object"</strong> and <strong>"the speaker is explaining something where a visual representation would improve understanding."</strong> Speech is not merely an instruction interface; speech is the source of rich, layered context.
+  </p>
+
+  <h2 id="problem-statement">1.3 Problem Statement</h2>
+
+  <p>
+    Humans naturally explain ideas through a multimodal combination of speech, gesture, spatial references, physical examples, metaphors, and demonstrations. However, current presentation and live video tools aggressively separate these modalities.
+  </p>
+
+  <div class="pill-grid">
+    <div class="pill"><div class="pill-label">Static Slides</div><div class="pill-value">Rigid, cannot adapt to questions</div></div>
+    <div class="pill"><div class="pill-label">Whiteboards</div><div class="pill-value">Breaks eye contact, limits quality</div></div>
+    <div class="pill"><div class="pill-label">Prepared Assets</div><div class="pill-value">Requires heavy pre-production</div></div>
+    <div class="pill"><div class="pill-label">Post-Production</div><div class="pill-value">Useless for live teaching</div></div>
+    <div class="pill"><div class="pill-label">Voice AR</div><div class="pill-value">Breaks pedagogical flow</div></div>
+  </div>
+
+  <p>
+    <strong>The Core Problem:</strong> There is a fundamental inability to spontaneously visualize concepts during live speech. A presenter's hands, voice, and environment are disconnected from the digital visual layer.
+  </p>
+
+  <h2 id="vision">1.4 Vision of Magic Mirror</h2>
+
+  <p>The complete intended experience of Magic Mirror is fluid, unobtrusive, and deeply immersive.</p>
+
+  <ul class="bullet">
+    <li><strong>The Speaker:</strong> Enters the camera view and begins talking. No controllers, no software dashboards. They point, gesture, and explain. They feel as though their words possess the power to conjure reality.</li>
+    <li><strong>The Audience:</strong> Watches a live video feed. As the speaker explains, contextually accurate visual aids seamlessly appear in the physical environment. It feels like watching a high-budget post-produced documentary, live.</li>
+    <li><strong>The AI System:</strong> Continuously observes, ingesting audio and video, maintaining rolling context, evaluating intent, planning strategies, rendering assets, and tracking physical geometry.</li>
+  </ul>
+
+  <h2 id="exact-experience">1.5 Exact User Experience</h2>
+
+  <p>The experience unfolds as a seamless sequence of natural human behavior and rapid machine reasoning.</p>
+
+  <ol class="clean">
+    <li><strong>Entry:</strong> The speaker enters the live camera environment.</li>
+    <li><strong>Natural Explanation:</strong> The speaker begins explaining naturally without wake words.</li>
+    <li><strong>Gestural Communication:</strong> The speaker uses hands to indicate size or point to empty space.</li>
+    <li><strong>Continuous Listening:</strong> System transcribes and semantically parses the stream.</li>
+    <li><strong>Scene Observation:</strong> System tracks gaze, hands, and spatial room geometry.</li>
+    <li><strong>Contextual Reasoning:</strong> System detects a Visualization Opportunity.</li>
+    <li><strong>Intervention Decision:</strong> System passes the relevance threshold to avoid false positives.</li>
+    <li><strong>Visual Planning:</strong> System decides <em>how</em> to represent the concept.</li>
+    <li><strong>Generation/Retrieval:</strong> System fetches or diffuses the visual.</li>
+    <li><strong>Spatial Grounding:</strong> System calculates exact 3D coordinates based on gestures.</li>
+    <li><strong>Scene Integration:</strong> Visual fades seamlessly into the live AR output.</li>
+    <li><strong>Temporal Evolution:</strong> Asset updates based on continued speech.</li>
+  </ol>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PART II — ARCHITECTURE & LOGIC
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="part-header" id="part-2">
+    <div class="part-number">Part II</div>
+    <div class="part-title">Architecture & Logic</div>
+    <p class="part-desc">The conceptual data flow of Magic Mirror, from raw audio-visual input through cognitive planning to final spatial rendering.</p>
+  </section>
+
+  <h2 id="system-architecture">2.1 Conceptual System Architecture</h2>
+
+  <p>
+    The architecture is defined by a pipeline of intelligent reasoning and rendering stages, not specific software libraries.
+  </p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Conceptual Pipeline</div>
+    <div class="mermaid">
+flowchart TD
+    A[Live Human Explanation] --> B(Voice + Camera Streams)
+    
+    subgraph Input_Processing [Input Processing]
+    C[Speech Transcription]
+    D[Computer Vision & Hand Tracking]
+    end
+    B --> C & D
+    
+    subgraph Cognitive_Layer [Cognitive Layer]
+    E[Multimodal Understanding]
+    F[(Context / Scene Memory)]
+    G{Visualization Opportunity}
+    end
+    C & D --> E
+    E <--> F
+    E --> G
+    
+    subgraph Planning [Decision & Planning]
+    H[Visual Planning]
+    I[Representation Selection]
+    end
+    G -- "Yes" --> H
+    H --> I
+    
+    subgraph Execution [Execution & Rendering]
+    J[Generate / Retrieve Visual]
+    K[Spatial Grounding]
+    L[Scene Integration]
+    M[Temporal / Motion Updates]
+    end
+    I --> J
+    J --> K
+    K --> L
+    L --> M
+    
+    M --> N[Live AR Output]
+    F -.-> M
+    
+    style G fill:#0ea5e9,stroke:#0284c7,color:#fff
+    style H fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style C fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style D fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style E fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style F fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style I fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style J fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style K fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style L fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style M fill:#1e1e24,stroke:#3a3a48,color:#e8e8ed
+    style N fill:#22c55e,stroke:#16a34a,color:#fff
+    </div>
+  </div>
+
+  <h2 id="multimodal-understanding">2.2 Multimodal Understanding</h2>
+
+  <p>Language is inherently ambiguous without physical context. The system must fuse:</p>
+  <ul class="bullet">
+    <li><strong>Linguistic Context:</strong> What is being said.</li>
+    <li><strong>Visual Context:</strong> Room layout, existing objects.</li>
+    <li><strong>Gestural Context:</strong> Pointing, miming actions.</li>
+    <li><strong>Spatial Context:</strong> Gaze and hand positions.</li>
+  </ul>
+
+  <div class="callout principle">
+    <div class="callout-label">Example</div>
+    <p>Speaker says: <strong>"Put this here."</strong><br>
+    Speech alone is meaningless. Speech + pointing hand (anchor) + gaze at existing molecule (subject) provides total understanding.</p>
+  </div>
+
+  <h2 id="context-memory">2.3 Context and Memory</h2>
+
+  <p>
+    Magic Mirror requires deep temporal memory. The visual state must persist. The system maintains a "World Model" of what is currently visible, interpreting speech as a <em>modification</em> to the existing scene rather than a prompt for a new generation.
+  </p>
+
+  <ol class="clean">
+    <li><em>"Let's consider the Earth."</em> → Generates 3D Earth.</li>
+    <li><em>"Now imagine it rotating."</em> → Resolves "it" to Earth, applies animation state.</li>
+    <li><em>"As it moves around the Sun..."</em> → Generates Sun, updates Earth positional logic to orbit.</li>
+  </ol>
+
+  <h2 id="opportunity-detection">2.4 Visualization Opportunity Detection</h2>
+
+  <p>The most complex cognitive task: identifying when visualization profoundly improves comprehension.</p>
+
+  <div class="comparison-grid">
+    <div class="comparison-card is">
+      <h4>WHEN to Visualize</h4>
+      <ul>
+        <li>Explicit spatial references</li>
+        <li>Demonstrations of processes</li>
+        <li>Explanations of structures</li>
+        <li>Comparisons & scale</li>
+        <li>Movement and transformations</li>
+      </ul>
+    </div>
+    <div class="comparison-card is-not">
+      <h4>WHEN NOT to Visualize</h4>
+      <ul>
+        <li>Anecdotes or stories</li>
+        <li>Metaphors ("raining cats and dogs")</li>
+        <li>Abstract conversational filler</li>
+        <li>Rapid, chaotic topic switching</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="visual-planning">2.5 Visual Planning</h2>
+
+  <p>Generation is not the first step; planning is. The system maps the semantic intent to the optimal visual archetype.</p>
+  <ul class="bullet">
+    <li><em>"Here is the human heart."</em> → <strong>3D Model</strong></li>
+    <li><em>"Blood moves from atrium to ventricle."</em> → <strong>3D Animation update</strong></li>
+    <li><em>"Look at this population growth."</em> → <strong>2D Graph</strong></li>
+  </ul>
+
+  <h2 id="visualization-types">2.6 2D, Animated, and 3D Visualization</h2>
+
+  <p>
+    A 3D object in Magic Mirror is not a flat image pasted over a video feed. It conceptually behaves as an object occupying physical space, complete with occlusion, lighting estimation, and spatial perspective. The visual exists as an interactive, live component of an ongoing explanation.
+  </p>
+
+  <h2 id="spatial-grounding">2.7 Spatial Grounding</h2>
+
+  <p>
+    Abstract language ("here", "above this") must map to the camera's physical geometry using pose estimation (e.g., MediaPipe) to derive 3D coordinates from the 2D video feed, anchoring the generated asset perfectly.
+  </p>
+
+  <h2 id="temporal-behavior">2.8 Temporal Behavior</h2>
+
+  <p>
+    The system must maintain object identity. It cannot regenerate a new Earth and Sun every frame. It applies continuous updates (transformations, shader changes) to existing objects in the scene graph to ensure visual continuity.
+  </p>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PART III — RESEARCH & STRATEGY
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="part-header" id="part-3">
+    <div class="part-number">Part III</div>
+    <div class="part-title">Research & Strategy</div>
+    <p class="part-desc">The landscape of current technology, the research gap Magic Mirror fills, and the exact scope of the MVP.</p>
+  </section>
+
+  <h2 id="research-landscape">3.1 Existing Technology / Research Landscape</h2>
+
+  <table>
+    <thead>
+      <tr><th>Research Area</th><th>Key Papers / Tech</th><th>What it Validates for Magic Mirror</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Speech-Driven AR</td><td>RealityTalk (UIST '22)</td><td>Proves speech-driven AR reduces presenter effort.</td></tr>
+      <tr><td>Multimodal Reasoning</td><td>U-Mind (2026)</td><td>Proves LLMs can perform real-time CoT planning across text/speech/gesture.</td></tr>
+      <tr><td>Real-Time Generative</td><td>StreamDiffusion (2023)</td><td>Proves generative diffusion can operate at 30-90 FPS for live streams.</td></tr>
+      <tr><td>Streaming Editing</td><td>LiveEdit (ECCV 2026)</td><td>Proves instructions can manipulate live video streams dynamically.</td></tr>
+      <tr><td>Scene Persistence</td><td>PERSIST (2025)</td><td>Proves latent 3D memory solves "flicker" and anchors virtual objects.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="comparisons">3.2 What Already Exists vs Magic Mirror</h2>
+
+  <table>
+    <thead>
+      <tr><th>System</th><th>How it Works</th><th>Where it Fails / Differs</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Voice-Controlled AR</td><td>Speaker issues explicit commands ("Show a chart")</td><td>Breaks natural pedagogy; requires command memorization.</td></tr>
+      <tr><td>Real-Time Image Gen</td><td>Generates video based on static text prompt</td><td>Lacks conversational context, spatial grounding, and automated intent detection.</td></tr>
+      <tr><td><strong>MAGIC MIRROR</strong></td><td><strong>Listens continuously, detects intent, plans visuals, generates, and anchors implicitly.</strong></td><td><strong>Unifies real-time generation, multimodal intent, and spatial grounding.</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="research-gap">3.3 The Research Gap</h2>
+
+  <p>
+    The critical research gap lies in the <strong>autonomous orchestration of these modalities for implicit, intent-driven visual augmentation.</strong> There is an insufficient body of research on systems capable of acting as an <em>autonomous, invisible co-director</em> that comprehends explanation, identifies value, plans, and renders spatial representations without explicit triggers.
+  </p>
+
+  <h2 id="hypothesis">3.4 Proposed Novelty / Research Hypothesis</h2>
+
+  <div class="callout principle">
+    <div class="callout-label">Hypothesis</div>
+    <blockquote>If a multimodal AI system can continuously interpret natural explanatory speech in conjunction with real-time physical scene geometry, it can autonomously identify high-value visualization opportunities and generate spatially grounded, temporally consistent visual representations without requiring explicit user commands.</blockquote>
+  </div>
+
+  <h2 id="mvp">3.5 MVP (Minimum Viable Product)</h2>
+
+  <p>The MVP focuses on proving the <em>experience</em> in a controlled environment, not supporting infinite concepts.</p>
+  <ul class="bullet">
+    <li><strong>Input:</strong> Speaker talks naturally; no wake words.</li>
+    <li><strong>Inference:</strong> Detects 3-5 predefined concepts (e.g., planetary orbits).</li>
+    <li><strong>Retrieval:</strong> Selects assets from a pre-cached library (bypassing live 3D diffusion latency for now).</li>
+    <li><strong>Placement:</strong> Anchors to tracked hand or table.</li>
+    <li><strong>Persistence:</strong> Asset updates logically based on continuing speech.</li>
+  </ul>
+
+  <h2 id="not-mvp">3.6 What the MVP is NOT</h2>
+
+  <div class="pill-grid">
+    <div class="pill"><div class="pill-label">Not</div><div class="pill-value">Unrestricted text-to-video</div></div>
+    <div class="pill"><div class="pill-label">Not</div><div class="pill-value">A general AI teacher</div></div>
+    <div class="pill"><div class="pill-label">Not</div><div class="pill-value">A full VR metaverse</div></div>
+    <div class="pill"><div class="pill-label">Not</div><div class="pill-value">A voice-command bot</div></div>
+  </div>
+
+  <h2 id="failure-cases">3.7 Failure Cases and Open Questions</h2>
+
+  <p>Significant conceptual hurdles remain unresolved:</p>
+  <ul class="bullet">
+    <li><strong>Ambiguity:</strong> How do we reliably tune the LLM to differentiate pedagogical literalism from colloquial metaphor in real-time?</li>
+    <li><strong>Information Density:</strong> If three concepts are spoken rapidly, does it visualize all, the most important, or none?</li>
+    <li><strong>Conflicting Modalities:</strong> Speech says "massive", but hands indicate "tiny". Which takes precedence?</li>
+    <li><strong>Latency vs. Relevance:</strong> Is a lower-quality visual instantly better than a high-quality visual delayed by 1 second?</li>
+  </ul>
+
+  <h2 id="evaluation">3.8 Evaluation Concept</h2>
+
+  <p>
+    Success is measured conceptually, not just by FPS. Metrics include: <em>Intent Accuracy</em> (precision/recall of visualization opportunities), <em>Representation Appropriateness</em>, <em>Spatial Relevance</em>, <em>Temporal Coherence</em>, and most importantly, <em>Reduction of Speaker Cognitive Load</em>.
+  </p>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PART IV — FUTURE & PRINCIPLES
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="part-header" id="part-4">
+    <div class="part-number">Part IV</div>
+    <div class="part-title">Future & Principles</div>
+    <p class="part-desc">The long-term roadmap and the immutable laws that govern the Magic Mirror project.</p>
+  </section>
+
+  <h2 id="use-cases">4.1 Use Cases</h2>
+
+  <ul class="bullet">
+    <li><strong>Education & Live Lectures:</strong> Anatomy professors having 3D organs dissect themselves based on lecture flow.</li>
+    <li><strong>Online Tutoring:</strong> Physics concepts visualized instantly for spontaneous student questions.</li>
+    <li><strong>Livestreaming:</strong> Streamers enhancing storytelling with dynamic, context-aware visual effects.</li>
+    <li><strong>Telehealth & Remote Training:</strong> Remote experts guiding trainees with visual overlays generated from verbal instructions.</li>
+  </ul>
+
+  <h2 id="long-term">4.2 Long-Term Vision</h2>
+
+  <p>If the MVP succeeds, the vision expands dramatically:</p>
+  <ul class="bullet">
+    <li><strong>Persistent Spatial Environments:</strong> The entire room becomes a canvas for building complex simulations part by part.</li>
+    <li><strong>Physics-Aware Simulations:</strong> Generated objects interact via physics (e.g., a virtual ball rolling down a virtual slope).</li>
+    <li><strong>Physical Object Understanding:</strong> Generating AR labels directly onto real physical objects (e.g., a real motherboard) based on speech.</li>
+  </ul>
+
+  <h2 id="terminology">4.3 Definitions / Terminology</h2>
+
+  <table>
+    <thead>
+      <tr><th>Term</th><th>Definition</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Natural Explanatory Speech</td><td>Conversational language used to teach, lacking explicit system commands.</td></tr>
+      <tr><td>Visualization Opportunity</td><td>A moment in speech where visual representation measurably increases comprehension.</td></tr>
+      <tr><td>Visual Planning</td><td>Deciding <em>how</em> to represent a concept (modality, style, scale) before rendering.</td></tr>
+      <tr><td>Spatial Grounding</td><td>Anchoring a digital asset to a semantically relevant physical location.</td></tr>
+      <tr><td>Live Compositing</td><td>The zero-latency blending of the generated visual layer with the live camera feed.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="project-principles">4.4 Final Project Principles</h2>
+
+  <div class="law-card">
+    <div class="law-number">Principle I</div>
+    <div class="law-statement">The User Explains; They Do Not Command.</div>
+    <div class="law-purpose">The system adapts to the human. No wake words, no syntax memorization.</div>
+  </div>
+
+  <div class="law-card">
+    <div class="law-number">Principle II</div>
+    <div class="law-statement">Speech is Context, Not Merely Instructions.</div>
+    <div class="law-purpose">Speech provides the semantic "why" and "what". It must be interpreted holistically, not parsed for keywords.</div>
+  </div>
+
+  <div class="law-card">
+    <div class="law-number">Principle III</div>
+    <div class="law-statement">Visualize Meaning, Not Keywords.</div>
+    <div class="law-purpose">Do not generate a dog just because the word "dog" was spoken. Generate only if visualizing it aids the point.</div>
+  </div>
+
+  <div class="law-card">
+    <div class="law-number">Principle IV</div>
+    <div class="law-statement">Visualization is Purposeful, Not Constant.</div>
+    <div class="law-purpose">Silence and empty space are valuable. The system should remain invisible until its intervention is highly relevant.</div>
+  </div>
+
+  <div class="law-card">
+    <div class="law-number">Principle V</div>
+    <div class="law-statement">Visuals Persist and Evolve.</div>
+    <div class="law-purpose">A concept doesn't vanish at the end of a sentence. Objects possess identity, mutating as the explanation continues.</div>
+  </div>
+
+  <div class="law-card">
+    <div class="law-number">Principle VI</div>
+    <div class="law-statement">3D is Treated as Real Spatial Matter.</div>
+    <div class="law-purpose">3D objects are not flat overlays. They have depth, obey occlusion, cast shadows, and occupy physical coordinates.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p style="text-align: center; color: var(--text-muted); font-size: 12px; padding: var(--space-2xl) 0;">
+    MAGIC MIRROR — Engineering Bible v1.0<br>
+    This is a living document. It evolves as Magic Mirror evolves.
+  </p>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════════ -->
+
+<script>
+  // Initialize Mermaid with dark theme (Magic Mirror colors)
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      primaryColor: '#0ea5e9',
+      primaryTextColor: '#e8e8ed',
+      primaryBorderColor: '#3a3a48',
+      lineColor: '#4a4a58',
+      secondaryColor: '#1e1e24',
+      tertiaryColor: '#111114',
+      background: '#0a0a0c',
+      mainBkg: '#1e1e24',
+      nodeBorder: '#3a3a48',
+      clusterBkg: '#111114',
+      clusterBorder: '#2a2a34',
+      titleColor: '#e8e8ed',
+      edgeLabelBackground: '#111114',
+      fontSize: '13px'
+    },
+    flowchart: {
+      curve: 'basis',
+      padding: 20
+    }
+  });
+
+  // Active link tracking
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = [];
+
+  links.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const target = document.getElementById(href.substring(1));
+      if (target) sections.push({ el: target, link: link });
+    }
+  });
+
+  function updateActive() {
+    let current = sections[0];
+    const scrollPos = window.scrollY + 120;
+
+    for (const section of sections) {
+      if (section && section.el && section.el.offsetTop <= scrollPos) {
+        current = section;
+      }
+    }
+
+    links.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+</script>
+
+</body>
+</html>
