@@ -1,0 +1,65 @@
+{
+  "speaker_activity": [
+    {
+      "intent": "correcting",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [
+      {
+        "id": "cold_air",
+        "name": "cold air",
+        "class": "physical_state",
+        "status": "new_explicit"
+      },
+      {
+        "id": "warm",
+        "name": "warm",
+        "class": "physical_state",
+        "status": "new_explicit"
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "cold_air",
+        "predicate": "is",
+        "object": "warm",
+        "type": "composition",
+        "confidence": 0.95
+      }
+    ],
+    "quantities": [
+      {
+        "entity": "cold_air",
+        "amount": 1,
+        "unit": "air"
+      }
+    ]
+  },
+  "explicit_information": [
+    "cold air",
+    "warm"
+  ],
+  "inferred_information": [
+    "cold air is not cold",
+    "warm air is not warm"
+  ],
+  "coreference_resolutions": [
+    {
+      "text_reference": "it",
+      "resolved_entity": "cold_air"
+    }
+  ],
+  "explanation_state": {
+    "current_topic": "physical states of air",
+    "active_concept": "temperature changes",
+    "recent_entities": [
+      "cold air",
+      "warm"
+    ]
+  },
+  "timestamp": 1790205609,
+  "is_partial": false,
+  "text_segment": "The cold air was warm."
+}

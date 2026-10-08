@@ -1,0 +1,85 @@
+{
+  "speaker_activity": [
+    {
+      "intent": "explaining",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [
+      {
+        "id": "oxygen",
+        "name": "atom",
+        "class": "chemical",
+        "status": "new_explicit"
+      },
+      {
+        "id": "nucleus",
+        "name": "nucleus",
+        "class": "subatomic",
+        "status": "new_explicit"
+      },
+      {
+        "id": "oxygen_atom",
+        "name": "oxygen atom",
+        "class": "inferred",
+        "status": "inferred_context"
+      },
+      {
+        "id": "my_right_hand",
+        "name": "my right hand",
+        "class": "inferred_candidate",
+        "status": "auto_detected"
+      },
+      {
+        "id": "nuclei",
+        "name": "the nuclei",
+        "class": "inferred_candidate",
+        "status": "auto_detected"
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "oxygen atom",
+        "predicate": "contains",
+        "object": "nucleus",
+        "type": "composition",
+        "confidence": 0.95
+      }
+    ],
+    "quantities": [
+      {
+        "entity": "oxygen atom",
+        "amount": 1,
+        "unit": "atom"
+      }
+    ]
+  },
+  "explicit_information": [
+    "oxygen atom",
+    "nucleus"
+  ],
+  "inferred_information": [
+    "holding an oxygen atom on the right hand",
+    "The speaker's physical right hand serves as the real-world spatial coordinate anchor in the camera workspace.",
+    "The visual asset ('atom') should be tracked and pinned directly to the speaker's physical right hand.",
+    "The discourse references molecular composition; downstream renderer should project molecular bonds and 3D atomic structures."
+  ],
+  "coreference_resolutions": [
+    {
+      "text_reference": "it",
+      "resolved_entity": "oxygen atom"
+    }
+  ],
+  "explanation_state": {
+    "current_topic": "atomic structure",
+    "active_concept": "oxygen atom",
+    "recent_entities": [
+      "oxygen atom",
+      "nucleus"
+    ]
+  },
+  "timestamp": 1791184792,
+  "is_partial": false,
+  "text_segment": "Look, I am currently holding an oxygen atom on my right hand and the nuclei..."
+}

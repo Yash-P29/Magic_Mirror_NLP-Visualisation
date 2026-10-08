@@ -1,0 +1,59 @@
+{
+  "speaker_activity": [
+    {
+      "intent": "explaining",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [
+      {
+        "id": "salt",
+        "name": "salt",
+        "class": "chemical compound",
+        "status": "new_explicit"
+      },
+      {
+        "id": "sodium",
+        "name": "sodium",
+        "class": "chemical element",
+        "status": "new_explicit"
+      },
+      {
+        "id": "chlorine",
+        "name": "chlorine",
+        "class": "chemical element",
+        "status": "new_explicit"
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "salt",
+        "predicate": "is composed of",
+        "object": "sodium and chlorine",
+        "type": "composition",
+        "confidence": 0.95
+      }
+    ],
+    "quantities": []
+  },
+  "explicit_information": [
+    "Salt is composed of sodium and chlorine.",
+    "Sodium is a chemical element.",
+    "Chlorine is a chemical element."
+  ],
+  "explanation_state": {
+    "current_topic": "Salt",
+    "active_concept": "salt",
+    "recent_entities": [
+      "salt",
+      "sodium",
+      "chlorine"
+    ]
+  },
+  "timestamp": 1789293174,
+  "is_partial": false,
+  "text_segment": "Salt is sodium and chlorine.",
+  "inferred_information": [],
+  "coreference_resolutions": []
+}

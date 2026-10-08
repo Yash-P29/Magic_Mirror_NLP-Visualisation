@@ -1,0 +1,26 @@
+{
+  "speaker_activity": [
+    {
+      "intent": "questioning",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [],
+    "relationships": [],
+    "quantities": []
+  },
+  "explicit_information": [
+    "I think this is a good idea."
+  ],
+  "coreference_resolutions": [],
+  "explanation_state": {
+    "current_topic": "idea",
+    "active_concept": "idea",
+    "recent_entities": []
+  },
+  "timestamp": 1789296935,
+  "is_partial": false,
+  "text_segment": "I think this is a good idea.",
+  "inferred_information": []
+}

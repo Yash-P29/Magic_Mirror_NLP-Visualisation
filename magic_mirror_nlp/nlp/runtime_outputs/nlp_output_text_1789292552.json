@@ -1,0 +1,69 @@
+{
+  "timestamp": 1789292552,
+  "is_partial": false,
+  "text_segment": "Water is two hydrogen and one oxygen.",
+  "speaker_activity": [
+    {
+      "intent": "explaining",
+      "confidence": 0.95
+    }
+  ],
+  "semantic_graph": {
+    "entities": [
+      {
+        "id": "ent_1",
+        "name": "hydrogen",
+        "class": "element",
+        "status": "new_explicit"
+      },
+      {
+        "id": "ent_2",
+        "name": "oxygen",
+        "class": "element",
+        "status": "new_explicit"
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "ent_1",
+        "predicate": "composition",
+        "object": "ent_2",
+        "type": "chemical_compound",
+        "confidence": 0.95
+      }
+    ],
+    "quantities": [
+      {
+        "entity": "ent_1",
+        "amount": 2,
+        "unit": "element"
+      },
+      {
+        "entity": "ent_2",
+        "amount": 1,
+        "unit": "element"
+      }
+    ]
+  },
+  "explicit_information": [
+    "hydrogen",
+    "oxygen"
+  ],
+  "inferred_information": [
+    "water is composed of hydrogen and oxygen"
+  ],
+  "coreference_resolutions": [
+    {
+      "text_reference": "it",
+      "resolved_entity": "ent_1"
+    }
+  ],
+  "explanation_state": {
+    "current_topic": "chemical composition",
+    "active_concept": "water",
+    "recent_entities": [
+      "ent_1",
+      "ent_2"
+    ]
+  }
+}
