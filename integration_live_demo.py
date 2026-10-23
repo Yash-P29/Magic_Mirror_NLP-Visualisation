@@ -73,6 +73,18 @@ from integration.runtime.multimodal_runtime import MultimodalRuntime
 from integration.multimodal_fusion.schemas import VisualPlan, ActionType
 
 # ---------------------------------------------------------------------------
+# Asset rendering  (new, additive)
+# ---------------------------------------------------------------------------
+from src.perception.assets import (
+    ConceptAssetStore,
+    render_box_and_asset,
+    format_concept_label,
+    clip_text_to_width,
+)
+
+_ASSET_STORE = ConceptAssetStore()
+
+# ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
 logging.basicConfig(
@@ -117,6 +129,7 @@ class LiveState:
         self.intent_conf: float = 0.0
         self.entities: list = []
         self.plan: Optional[VisualPlan] = None
+        self.active_concept: Optional[str] = None
 
     def update_transcript(self, text: str, partial: bool) -> None:
         with self._lock:
@@ -142,6 +155,12 @@ class LiveState:
     def update_plan(self, plan: VisualPlan) -> None:
         with self._lock:
             self.plan = plan
+            if plan:
+                if plan.action == ActionType.REMOVE:
+                    self.active_concept = None
+                elif plan.action not in (ActionType.NONE, None):
+                    if plan.concept and plan.concept.strip() not in ("", "—", "unknown", "none"):
+                        self.active_concept = plan.concept.strip()
 
     def snapshot(self):
         with self._lock:
@@ -152,6 +171,7 @@ class LiveState:
                 self.intent_conf,
                 list(self.entities),
                 self.plan,
+                self.active_concept,
             )
 
 
@@ -456,24 +476,41 @@ def _draw_dashed_rect(img, pt1, pt2, color, thickness=2, dash_length=15):
             cv2.line(img, p1, (int(p2_x), int(p2_y)), color, thickness, _LT)
 
 
-def _draw_visual_opportunity(frame, scene_state) -> None:
+def _clip_text_to_width(text: str, max_width: int, scale: float = _FS_LABEL, thickness: int = _FT) -> str:
+    """Clips or shortens label text with ellipsis if it exceeds max_width in pixels."""
+    return clip_text_to_width(text, max_width, scale=scale, thickness=thickness)
+
+
+def _draw_visual_opportunity(
+    frame,
+    scene_state,
+    concept_label: Optional[str] = None,
+    asset_store: Optional[ConceptAssetStore] = None,
+) -> None:
     """
-    Draws the EXISTING yellow VisualOpportunity dashed rectangle.
-    Comes directly from scene_state.visual_opportunity — the detector is
-    completely unchanged.
+    Renders the yellow VisualOpportunity box with:
+    - proportional image asset if available for the active concept
+    - high-contrast concept label badge
+    - yellow dashed border (always on top)
     """
     if scene_state is None:
         return
     opp = scene_state.visual_opportunity
     if opp and opp.available:
-        h, w = frame.shape[:2]
-        x1 = int(opp.bbox[0] * w)
-        y1 = int(opp.bbox[1] * h)
-        x2 = int(opp.bbox[2] * w)
-        y2 = int(opp.bbox[3] * h)
-        _draw_dashed_rect(frame, (x1, y1), (x2, y2), _C_OPPORTUNITY, thickness=2)
-        label = opp.type.value.upper() if opp.type else "OPPORTUNITY"
-        _shadow_text(frame, label, x1, max(y1 - 6, 12), _C_OPPORTUNITY, scale=_FS_SMALL)
+        # Resolve concept: explicit arg > opp.concept_label > None
+        active_concept = concept_label or getattr(opp, "concept_label", None)
+
+        # Fetch matching asset (returns None or ConceptAsset with status info)
+        store = asset_store or _ASSET_STORE
+        asset = store.get_asset(active_concept) if active_concept else None
+
+        # render_box_and_asset handles border, label badge, and image all in one pass
+        render_box_and_asset(
+            frame,
+            bbox=opp.bbox,
+            concept_label=active_concept,
+            asset=asset if (asset is not None and asset.is_valid_image) else None,
+        )
 
 
 def _draw_integration_hud(frame, transcript, is_partial, intent, intent_conf, entities, plan) -> None:
@@ -608,6 +645,7 @@ def run(
     mic_device: int = DEFAULT_MIC_DEVICE_INDEX,
     model_name: str = DEFAULT_OLLAMA_MODEL,
     timeout: float = 0.0,
+    show_hud: bool = False,
 ) -> int:
 
     backend_map = {"dshow": cv2.CAP_DSHOW, "msmf": cv2.CAP_MSMF, "any": cv2.CAP_ANY}
@@ -655,7 +693,6 @@ def run(
     print("  Speak naturally into the microphone.")
     print("  Example: 'Imagine a dog on my hand'")
     print("  Then:    'Move it there' (while pointing)")
-    print("  HUD panel (right) shows live NLP + plan data.")
     print("  Press Q / ESC to quit.")
     print("=" * 60)
 
@@ -684,17 +721,20 @@ def run(
                 except Exception as exc:
                     logger.warning("Perception error: %s", exc)
 
-            # Existing yellow VisualOpportunity rectangle
-            _draw_visual_opportunity(frame_data.image, last_scene)
+            # Snapshot state (including active concept)
+            transcript, is_partial, intent, intent_conf, entities, plan, active_concept = live_state.snapshot()
 
-            # Integration HUD
-            transcript, is_partial, intent, intent_conf, entities, plan = live_state.snapshot()
-            _draw_integration_hud(
-                frame_data.image,
-                transcript, is_partial,
-                intent, intent_conf,
-                entities, plan,
-            )
+            # Existing yellow VisualOpportunity rectangle with active concept label
+            _draw_visual_opportunity(frame_data.image, last_scene, concept_label=active_concept)
+
+            # Integration HUD (hidden by default for clean view; enabled with --show-hud / --debug)
+            if show_hud:
+                _draw_integration_hud(
+                    frame_data.image,
+                    transcript, is_partial,
+                    intent, intent_conf,
+                    entities, plan,
+                )
 
             cv2.imshow(_WINDOW, frame_data.image)
 
@@ -738,6 +778,9 @@ def _parse() -> argparse.Namespace:
                    help="Ollama model name for QwenExtractor")
     p.add_argument("--timeout",    type=float, default=0.0,
                    help="Auto-quit after N seconds (0=forever)")
+    p.add_argument("--show-hud", "--debug", action="store_true", default=False,
+                   dest="show_hud",
+                   help="Show integration HUD panel on video overlay (default: clean view)")
     return p.parse_args()
 
 
@@ -749,4 +792,5 @@ if __name__ == "__main__":
         mic_device=args.mic_device,
         model_name=args.model,
         timeout=args.timeout,
+        show_hud=args.show_hud,
     ))

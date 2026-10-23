@@ -239,19 +239,25 @@ CURRENT TEXT TO PROCESS:
             adaptive_num_predict = 450
 
         try:
-            response = ollama.chat(
-                model=self.model_name,
-                messages=[
-                    {"role": "system", "content": self.system_instruction},
-                    {"role": "user", "content": user_message}
-                ],
-                format="json",
-                options={
-                    "temperature": 0.0,
-                    "num_predict": adaptive_num_predict,
-                    "repeat_penalty": 1.0
-                }
-            )
+            try:
+                response = ollama.chat(
+                    model=self.model_name,
+                    messages=[
+                        {"role": "system", "content": self.system_instruction},
+                        {"role": "user", "content": user_message}
+                    ],
+                    format="json",
+                    options={
+                        "temperature": 0.0,
+                        "num_predict": adaptive_num_predict,
+                        "repeat_penalty": 1.0
+                    }
+                )
+                raw_content = response.get("message", {}).get("content", "{}").strip()
+            except Exception as ollama_err:
+                print(f"[QwenExtractor] Notice: Ollama offline/unreachable ({ollama_err}). Using fast rule-based extraction fallback.")
+                response = {}
+                raw_content = "{}"
             latency = time.time() - start_time
             
             # Record telemetry metrics
@@ -263,8 +269,6 @@ CURRENT TEXT TO PROCESS:
                 "load_duration_sec": (response.get("load_duration") or 0) / 1e9,
                 "total_duration_sec": (response.get("total_duration") or 0) / 1e9
             }
-            
-            raw_content = response.get("message", {}).get("content", "{}").strip()
             
             try:
                 result_dict = json.loads(raw_content)
@@ -412,30 +416,44 @@ CURRENT TEXT TO PROCESS:
                     existing_ids.add(norm_id)
                     existing_names.add(norm_name)
             
-            # --- spaCy Noun Safety Net ---
-            if spacy_nlp is not None and current_text.strip():
-                doc = spacy_nlp(current_text)
+            # --- spaCy / Regex Noun Safety Net ---
+            if current_text.strip():
                 candidates = []
-                for chunk in doc.noun_chunks:
-                    candidates.append(chunk.text)
-                for token in doc:
-                    if token.pos_ in ("NOUN", "PROPN"):
-                        candidates.append(token.text)
+                if spacy_nlp is not None:
+                    doc = spacy_nlp(current_text)
+                    for chunk in doc.noun_chunks:
+                        candidates.append(chunk.text)
+                    for token in doc:
+                        if token.pos_ in ("NOUN", "PROPN"):
+                            candidates.append(token.text)
+                else:
+                    # Robust fallback parser for key entities and noun phrases
+                    # Matches common phrases like "a dog", "the solar system", "a planet", "the core", etc.
+                    for m in re.finditer(r'\b(?:a|an|the|my|this|that)?\s*([a-zA-Z][a-zA-Z0-9_\-]*(?:\s+[a-zA-Z][a-zA-Z0-9_\-]*){0,2})\b', current_text, re.IGNORECASE):
+                        cand = m.group(1).strip()
+                        if cand:
+                            candidates.append(cand)
                 
                 # Filter candidates
-                stop_words = {"it", "this", "that", "they", "he", "she", "we", "i", "you", "a", "an", "the", "some", "any"}
+                stop_words = {
+                    "it", "this", "that", "they", "he", "she", "we", "i", "you", "a", "an", "the",
+                    "some", "any", "my", "your", "his", "her", "their", "there", "here", "hand", "palm",
+                    "imagine", "visualize", "show", "me", "see", "look", "put", "place", "move", "now"
+                }
                 for cand in set(candidates):
                     cand_lower = cand.strip().lower()
                     if not cand_lower or cand_lower in stop_words:
                         continue
                         
                     # Remove leading articles for comparison
-                    clean_cand_lower = re.sub(r'^(the|a|an)\s+', '', cand_lower)
+                    clean_cand_lower = re.sub(r'^(the|a|an|my|this|that)\s+', '', cand_lower).strip()
+                    if not clean_cand_lower or clean_cand_lower in stop_words or len(clean_cand_lower) < 2:
+                        continue
                     
                     # Check if candidate is already in existing_names or overlaps significantly
                     is_found = False
                     for existing_name in existing_names:
-                        clean_existing = re.sub(r'^(the|a|an)\s+', '', existing_name)
+                        clean_existing = re.sub(r'^(the|a|an|my|this|that)\s+', '', existing_name).strip()
                         if clean_cand_lower in clean_existing or clean_existing in clean_cand_lower:
                             is_found = True
                             break
@@ -445,9 +463,9 @@ CURRENT TEXT TO PROCESS:
                         if norm_id and norm_id not in existing_ids:
                             result_dict["semantic_graph"]["entities"].append({
                                 "id": norm_id,
-                                "name": cand.strip(),
-                                "class": "inferred_candidate",
-                                "status": "inferred_context"
+                                "name": clean_cand_lower,
+                                "class": "object",
+                                "status": "new_explicit"
                             })
                             existing_ids.add(norm_id)
                             existing_names.add(cand_lower)
@@ -495,8 +513,15 @@ CURRENT TEXT TO PROCESS:
                     result_dict["explanation_state"]["recent_entities"] = flat_recent
                 if "current_topic" not in result_dict["explanation_state"]:
                     result_dict["explanation_state"]["current_topic"] = "general"
-                if "active_concept" not in result_dict["explanation_state"]:
-                    result_dict["explanation_state"]["active_concept"] = "statement"
+                
+                # If active_concept is generic or missing, bind to the primary entity
+                curr_concept = result_dict["explanation_state"].get("active_concept", "")
+                if not curr_concept or curr_concept in ("statement", "general", "unknown", "none"):
+                    ents = result_dict["semantic_graph"].get("entities", [])
+                    if ents and isinstance(ents[0], dict) and ents[0].get("name"):
+                        result_dict["explanation_state"]["active_concept"] = ents[0]["name"]
+                    else:
+                        result_dict["explanation_state"]["active_concept"] = "concept"
 
             return result_dict, latency
             
